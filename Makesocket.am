@@ -1,2 +1,14 @@
-include plugins/casm-utilities-plugin/src/Makemodule.am
-include plugins/casm-utilities-plugin/tests/Makemodule.am
+bin_PROGRAMS += _casmutils-hello
+
+_casmutils_hello_SOURCES=\
+						  plugins/casm-utilities-plugin/src/hello.cpp
+
+_casmutils_hello_LDADD=\
+						libcasmutils.la\
+						libcasmutils.la
+
+TESTS+=check_plugin_hello
+check_PROGRAMS+=check_plugin_hello
+check_plugin_hello_SOURCES=plugins/casm-utilities-plugin/tests/unit/hello.cpp
+check_plugin_hello_LDADD=\
+						libgtest.la
