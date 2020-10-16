@@ -1,7 +1,8 @@
 bin_PROGRAMS += _casmutils-hello
 
 _casmutils_hello_SOURCES=\
-						  src/hello/hello.cpp
+						  plugins/casm-utilities-plugin/src/hello/hello.cpp
 
 _casmutils_hello_LDADD=\
+						libcasmutils.la\
 						libcasmutils.la
