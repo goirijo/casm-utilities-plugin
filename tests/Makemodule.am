@@ -1,0 +1,1 @@
+include plugins/casm-utilities-plugin/tests/unit/Makemodule.am
