@@ -1,0 +1,7 @@
+#!@PYTHON@
+
+def main():
+    print("On Wednesdays we wear pink.")
+
+if __name__=="__main__":
+    main()

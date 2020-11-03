@@ -4,12 +4,14 @@ Only one file in here really matters: `Makesocket.am`.
 This is the the segment that will connect with the rest of the build.
 You can link against `libcasmutils.la` for all the `casm-utilities` functions and classes, and use `libgtests` for your tests.
 
-## Automake directives
 The plugin will be compiled as if it was part of the `casm-utilities` repository, which allows you to link against anything defined in that repository.
 This also means that all the paths you use need to be relative to that repository.
 You can extend the compilation with basically any automake feature, including binaries, scripts, headers and libraries.
 
-## Basic binary script (c++)
+Each of the following sections describes different kinds of things you can create as a plugin.
+A plugin does not need all of these things to work, this is just a comprehensive list of examples of what's possible.
+
+## Basic binary (c++)
 This section will cover the minimum amount of entries you'll need to make a binary compile as a plugin.
 
 ### bin_PROGRAMS
@@ -49,6 +51,60 @@ bin_PROGRAMS += _casmutils-hello
 _casmutils_hello_SOURCES = plugins/casm-utilities-plugin/src/hello.cpp
 _casmutils_hello_LDADD = libcasmutils.la
 ```
+
+## Basic script (python/bash)
+Sometimes c++ is overkill, and you can do what you need through a python script.
+The steps for that are explained here.
+As with c++ binaries, the name of the utility should follow the format `_casmutils-*`.
+
+### dist_bin_SCRIPTS
+If we wanted to call a utility `hellopy`, we could have a python script called `_casmutils-hellopy`:
+```python
+#!/usr/bin/python
+
+print("hello")
+```
+
+Suppse this was located under `src/_casmutils-hellopy`.
+We can specify that we want this script installed by having the following in the `Makesocket.am` file:
+```
+dist_bin_SCRIPTS += plugins/casm-utilities-plugin/src/_casmutils-hellopy
+```
+
+This will work for you, but not for other people that might be using your plugin.
+
+### *.in and EXTRA_DIST
+When writing an executable python script, the first line is always the path to the interpreter:
+```
+#!/usr/bin/python
+```
+You should not do this.
+
+Different systems will have python installed in different locations, so your utility won't work.
+Instead, your script should be called `_casmutils-hellopy.in`, and instead of a hard coded path to the interpreter, it should say:
+```
+#!@PYTHON@
+```
+
+You should include this file in `EXTRA_DIST`:
+```
+dist_bin_SCRIPTS += plugins/casm-utilities-plugin/src/_casmutils-hellopy
+EXTRA_DIST += plugins/casm-utilities-plugin/src/_casmutils-hellopy.in
+```
+Note that we're keeping `dist_bin_SCRIPTS` as it was before.
+Also notice that `_casmutils-hellopy.in` is being tracked by the repository, but `_casmutils-hellopy` is *not*.
+
+### configure.ac
+Once you have the `*.in` script, you need to specify what `@PYTHON@` should transform into during the configure step.
+To do this, have a file called `configure.ac` in the root of your plugin.
+The `bootstrap.sh` script of the parent `casm-utilities` repository will include whatever you say in this file in a similar manner to the `Makesocket.am` files.
+The following line in the plugin `configure.ac` specifies that the `*.in` file should be converted to the final script with the correct path to the interpreter:
+```
+AC_CONFIG_FILES([plugins/casm-utilities-plugin/src/_casmutils-hellopy],[chmod +x plugins/casm-utilities-plugin/src/_casmutils-hellopy])
+```
+
+You should be aware that any editing to `configure.ac` files will require you to run `boostrap.sh` in the parent repository.
+
 
 ## Installing additional header files
 If your plugin is expanding on the `casmutils` library, you may have some headers you'd like to be installed alongside the parent repository.

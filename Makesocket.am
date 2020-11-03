@@ -12,6 +12,14 @@ _casmutils_hello_LDADD=\
 
 #####################################################################################
 
+dist_bin_SCRIPTS += \
+					plugins/casm-utilities-plugin/src/_casmutils-hellopy
+
+EXTRA_DIST += \
+                plugins/casm-utilities-plugin/src/_casmutils-hellopy.in
+
+#####################################################################################
+
 if CASMUTILS_LIBRARY
 casmutils_plugin_includedir=\
 							 $(includedir)/casmutils/sym
