@@ -195,11 +195,11 @@ Note: You may need to install `python3-dev` for this to work.
 
 ### Makesocket.am
 To install the new python module properly, we must append to the `Makesocket.am` file:
-``
+```
 utilsplugindir=$(pythondir)
 utilsplugin_LTLIBRARIES = utilsplugin.la
 utilsplugin_la_SOURCES = plugins/casm-utilities-plugin/py/extension-py.cxx
 utilsplugin_la_LIBADD = libcasmutils.la
 utilsplugin_la_LDFLAGS = -module
-``
+```
 These flags will ensure that the python module is compiled as a library named `utilsplugin.la` and installed in `$(pythondir)` alongside other python modules. As usual, `utilsplugin_la_SOURCES` specifies source files and `utilsplugin_la_LIBADD` specifies libraries to link against.
