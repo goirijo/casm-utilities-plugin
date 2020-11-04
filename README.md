@@ -177,7 +177,7 @@ AM_CPPFLAGS += -I$(srcdir)/plugins/casm-utilities-plugin/include
 ```
 
 ## Binding library extensions to python
-You can also bind classes and standalone functions declared in `extension.hpp` to python using [https://github.com/pybind/pybind11](pybind11). Currently, extensions may only be added as new modules, separate from the `casmutils` python module.
+You can also bind classes and standalone functions declared in `extension.hpp` to python using [`pybind11`](https://github.com/pybind/pybind11). Currently, extensions may only be added as new modules, separate from the `casmutils` python module.
 
 ### python bindings
 Bindings for the `extension.hpp` example are specified in `py/extension-py.cxx`:
