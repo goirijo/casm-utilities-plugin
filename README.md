@@ -145,7 +145,7 @@ endif
 Do not indent the `if` statement.
 
 ## Extending libcasmutils
-Unless your library module is header only, you will also have sources that you need to compile, and should be linked together with the resto of `libcasmutils`.
+Unless your library module is header only, you will also have sources that you need to compile, and should be linked together with the rest of `libcasmutils`.
 This example will cover how to compile `extension.cxx`, which relies on the `extension.hpp` header.
 Paths to these files relative to the plugin root are as follows:
 
@@ -175,3 +175,31 @@ In order for this to work, specify the path to your `include` directory as an ad
 ```
 AM_CPPFLAGS += -I$(srcdir)/plugins/casm-utilities-plugin/include
 ```
+
+## Binding library extensions to python
+You can also bind classes and standalone functions declared in `extension.hpp` to python using [`pybind11`](https://github.com/pybind/pybind11). Currently, extensions may only be added as new modules, separate from the `casmutils` python module.
+
+### python bindings
+Bindings for the `extension.hpp` example are specified in `py/extension-py.cxx`:
+```
+PYBIND11_MODULE(utilsplugin, m) {
+    py::class_<cu::sym::PluginExtension>(m, "PluginExtension")
+        .def("say_hello", &cu::sym::PluginExtension::say_hello)
+        .def("say_hello_again", &cu::sym::PluginExtension::say_hello_again);
+    m.def("plug_extension", &cu::sym::plugin_extension);
+}
+```
+In this example, the new python module `utilsplugin` will contain a class `PluginExtension` (binding of `cu::sym::PluginExtension`) with two member functions `say_hello` and `say_hello_again`, as well as a standalone function `plug_extension` (binding of `cu::sym::plugin_extension`).
+
+Note: You may need to install `python3-dev` for this to work.
+
+### Makesocket.am
+To install the new python module properly, we must append to the `Makesocket.am` file:
+```
+utilsplugindir=$(pythondir)
+utilsplugin_LTLIBRARIES = utilsplugin.la
+utilsplugin_la_SOURCES = plugins/casm-utilities-plugin/py/extension-py.cxx
+utilsplugin_la_LIBADD = libcasmutils.la
+utilsplugin_la_LDFLAGS = -module
+```
+These flags will ensure that the python module is compiled as a library named `utilsplugin.la` and installed in `$(pythondir)` alongside other python modules. As usual, `utilsplugin_la_SOURCES` specifies source files and `utilsplugin_la_LIBADD` specifies libraries to link against.
