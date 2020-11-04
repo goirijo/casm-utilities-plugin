@@ -36,6 +36,14 @@ libcasmutils_la_SOURCES +=\
 
 #####################################################################################
 
+utilsplugindir=$(pythondir)
+utilsplugin_LTLIBRARIES = utilsplugin.la
+utilsplugin_la_SOURCES = plugins/casm-utilities-plugin/py/extension-py.cxx
+utilsplugin_la_LIBADD = libcasmutils.la
+utilsplugin_la_LDFLAGS = -module
+
+#####################################################################################
+
 TESTS+=check_plugin_hello
 check_PROGRAMS+=check_plugin_hello
 check_plugin_hello_SOURCES=plugins/casm-utilities-plugin/tests/unit/hello.cpp
